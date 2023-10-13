@@ -1,0 +1,1 @@
+const stopMoment = "Trash Bin";

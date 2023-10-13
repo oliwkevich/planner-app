@@ -1,12 +1,33 @@
-import { cn } from "@/lib/utils";
-import { ChevronsLeft, MenuIcon } from "lucide-react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { ElementRef, useEffect, useRef, useState } from "react";
+import { useMutation } from "convex/react";
 import { usePathname } from "next/navigation";
-import React, { ElementRef, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
+
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import {
+  ChevronsLeft,
+  MenuIcon,
+  PlusCircle,
+  Search,
+  Settings,
+  Trash,
+} from "lucide-react";
+import { UserItem } from "./user-item";
+import { api } from "@/convex/_generated/api";
+import { Item } from "./item";
+import { DocumentList } from "./document-list";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 export const Navigation = () => {
   const pathname = usePathname();
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const create = useMutation(api.documents.create);
 
   const [isResetting, setIsResetting] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(isMobile);
@@ -96,6 +117,16 @@ export const Navigation = () => {
     }
   };
 
+  const handleCreate = () => {
+    const promise = create({ title: "Без назви" });
+
+    toast.promise(promise, {
+      loading: "Створення документу...",
+      success: "Новий документ створений!",
+      error: "Помилка при створенні документу!",
+    });
+  };
+
   return (
     <>
       <aside
@@ -117,10 +148,33 @@ export const Navigation = () => {
           <ChevronsLeft className="h-6 w-6" />
         </div>
         <div>
-          <p>Action Items</p>
+          <UserItem />
+          <Item
+            onClick={handleCreate}
+            label="Пошук..."
+            icon={Search}
+            isSearch
+          />
+          <Item onClick={handleCreate} label="Налаштування" icon={Settings} />
+          <Item
+            onClick={handleCreate}
+            label="Новий документ"
+            icon={PlusCircle}
+          />
+          <Popover>
+            <PopoverTrigger className="w-full mt-4">
+              <Item label="Кошик" icon={Trash} />
+            </PopoverTrigger>
+            <PopoverContent
+              side={isMobile ? "bottom" : "right"}
+              className="p-0 w-72"
+            >
+              <p>Trash Box</p>
+            </PopoverContent>
+          </Popover>
         </div>
         <div className="mt-4">
-          <p>Документи</p>
+          <DocumentList />
         </div>
         <div
           onMouseDown={handleMouseDown}

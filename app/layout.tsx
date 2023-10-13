@@ -4,6 +4,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ConvexClientProvider } from "@/providers/convex-provider";
+import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -36,6 +37,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ConvexClientProvider>
           <ThemeProvider attribute="class" defaultTheme="light">
+            <Toaster position="bottom-right" />
             {children}
           </ThemeProvider>
         </ConvexClientProvider>
